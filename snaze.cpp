@@ -337,60 +337,59 @@ size_t to_size_t(const char* s) {
     return static_cast<size_t>(v);
 }
 void Running_options(int &argc,char* argv[],std::vector<std::vector<std::vector<char>>> &levels,Player &player,size_t &fps){
-    if(argc<2){
-         std::cout<<"--help                  Print this help text.\n";
-            std::cout<<"--fps <num>             Number of frames (board) presented per second.\n";
-            std::cout<<"--lives <num>           Number of lives the snake shall have. Default = 5.\n";
-            std::cout<<"--food <num>            Number of food pellets for the entire simulation. Default = 10.\n";
-            std::cout<<"--playertype <type>     Type of snake intelligence: random, backtracking. Default = backtracking\n";
-            std::abort();
-        return;
-    }
-    std::ifstream mazes(argv[1]);
-    if (!mazes.is_open()) {
-    std::cerr << "Error to open file\n";
-    return;
-    }
-    std::string line;
-    size_t ic=0;
-    std::vector<std::vector<char>> tempv;
-    while(getline(mazes,line)){
-        if (std::isdigit(static_cast<unsigned char>(line[0]))) {
-            if(tempv.size()>0){
-                levels.push_back(tempv);
-            }
-            tempv.clear();
-        }
-        else{
-            tempv.push_back(std::vector<char>(line.begin(), line.end()));
-        }
-    }
-    for(size_t i=2;i<argc;i++){
-        if(strcmp(argv[i], "--help") == 0){
+        if(argc<2){
             std::cout<<"--help                  Print this help text.\n";
             std::cout<<"--fps <num>             Number of frames (board) presented per second.\n";
             std::cout<<"--lives <num>           Number of lives the snake shall have. Default = 5.\n";
             std::cout<<"--food <num>            Number of food pellets for the entire simulation. Default = 10.\n";
             std::cout<<"--playertype <type>     Type of snake intelligence: random, backtracking. Default = backtracking\n";
-            std::abort();
+            exit(0);
         }
-        else if(strcmp(argv[i], "--food") == 0 && i+1<argc){
-            player.set_score(to_size_t(argv[i+1]));
-            i++;
+        if(strcmp(argv[1], "--help") == 0){
+                std::cout<<"--help                  Print this help text.\n";
+                std::cout<<"--fps <num>             Number of frames (board) presented per second.\n";
+                std::cout<<"--lives <num>           Number of lives the snake shall have. Default = 5.\n";
+                std::cout<<"--food <num>            Number of food pellets for the entire simulation. Default = 10.\n";
+                std::cout<<"--playertype <type>     Type of snake intelligence: random, backtracking. Default = backtracking\n";
+                exit(0);
         }
-        else if(strcmp(argv[i], "--lives") == 0 && i+1<argc){
-            player.set_life(to_size_t(argv[i+1]));
-            i++;
+        std::ifstream mazes(argv[1]);
+        if (!mazes.is_open()) {
+        std::cerr << "Error to open file\n";
+        exit(0);
         }
-        else if(strcmp(argv[i], "--fps") == 0 && i+1<argc){
-            fps = to_size_t(argv[i+1]);
-            i++;
+        std::string line;
+        size_t ic=0;
+        std::vector<std::vector<char>> tempv;
+        while(getline(mazes,line)){
+            if (std::isdigit(static_cast<unsigned char>(line[0]))) {
+                if(tempv.size()>0){
+                    levels.push_back(tempv);
+                }
+                tempv.clear();
+            }
+            else{
+                tempv.push_back(std::vector<char>(line.begin(), line.end()));
+            }
         }
-        else{
+        for(size_t i=2;i<argc;i++){
+            if(strcmp(argv[i], "--food") == 0 && i+1<argc){
+                player.set_score(to_size_t(argv[i+1]));
+                i++;
+            }
+            else if(strcmp(argv[i], "--lives") == 0 && i+1<argc){
+                player.set_life(to_size_t(argv[i+1]));
+                i++;
+            }
+            else if(strcmp(argv[i], "--fps") == 0 && i+1<argc){
+                fps = to_size_t(argv[i+1]);
+                i++;
+            }
+            else{
 
+            }
         }
-    }
-    levels.push_back(tempv);
+        levels.push_back(tempv);
 }
 int main(int argc, char* argv[]){
     Player player(5);
